@@ -8,6 +8,7 @@ import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Account from './components/Account';
 import { AuthContextProvider, UserAuth } from './context/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function App() {

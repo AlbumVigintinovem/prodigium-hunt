@@ -5,6 +5,7 @@ import { Button, Col, Row } from 'reactstrap';
 import { UserAuth } from '../context/AuthContext'
 import { useSiteContext } from '../context/SiteContext';
 import db from '../firebase';
+import Map from './Map';
 
 const Account = () => {
 
@@ -22,7 +23,7 @@ const Account = () => {
         charInfo,
         getRandomValue } = useSiteContext();
 
-        const [monsterHealth, setMonsterHealth] = useState(100);
+    const [monsterHealth, setMonsterHealth] = useState(100);
 
     const [currentCharInfo, setCurrentCharInfo] = useState()
 
@@ -70,9 +71,7 @@ const Account = () => {
 
     const charLogout = () => {
         // localStorage.setItem("currentCharInfo", JSON.stringify(currentCharInfo))
-        debugger;
         localStorage.setItem("currentCharInfo", undefined)
-        // navigate('/')
     }
 
 
@@ -97,7 +96,7 @@ const Account = () => {
 
     const normalDamageHandle = (min, max) => {
         setMonsterHealth(
-             monsterHealth - getRandomValue(min, max)
+            monsterHealth - getRandomValue(min, max)
         )
         console.log(monsterHealth)
     }
@@ -112,78 +111,83 @@ const Account = () => {
     return (
         <>
             <Row>
-                <Col>
-                </Col>
-                <Col lg="3">
+                <Col lg="10" >
                     {playerInfo && playerInfo[0].charName} loged in. <h2>  Character Details</h2>
-                    <button onClick={handleLogout} >logout</button>
-
                 </Col>
-                {currentCharInfo ? <>
+                <Col lg="1">
+                <Button onClick={charLogout} > Select Character</Button>
+                </Col>
+                <Col lg="1">
+                <Button onClick={handleLogout} >logout</Button>
+                </Col>
+            </Row>
+            {currentCharInfo ? <>
+                <Row>
+
+                    <h2>
+                        Name: {currentCharInfo[0]?.charName}
+                    </h2>
+                </Row>
+                <Row>
+                    <Col>
+                        Job:  {currentCharInfo[0]?.job}
+                    </Col>
+                    <Col>
+                        HP:  {currentCharInfo[0]?.charCurrentHP} / {currentCharInfo[0]?.charHP}
+                    </Col>
+                    <Col>
+                        Damage:  {currentCharInfo[0]?.charDamageMin}  - {currentCharInfo[0]?.charDamageMax}
+                    </Col>
+                    <Col>
+                        Char LVL:  {currentCharInfo[0]?.charLevel}
+                    </Col>
+                    <Col>
+                        Char EXP:  {currentCharInfo[0]?.charLevelExp} / {currentCharInfo[0]?.charLevelUpExp}
+                    </Col>
+                </Row>
+                
+                <Button onClick={() => normalDamageHandle(currentCharInfo[0]?.charDamageMin, currentCharInfo[0]?.charDamageMax)} > Normal Attack</Button>
+                <Row>
+                    <Col>
+                        Monster Health: {monsterHealth}
+                    </Col>
+                </Row>
+                <Map />
+
+            </> : <>
+                {charInfo && charInfo.map((player, index) => <>
+                    <Row>
+                        <h2>
+                            Name: {player.charName}
+                        </h2>
+
+                    </Row>
                     <Row>
                         <Col>
-                        Monster Health: {monsterHealth}
+                            Char Slot:  {player.id}
                         </Col>
                         <Col>
-                            <h2>
-                                Name: {currentCharInfo[0]?.charName}
-                            </h2>
+                            Current HP:   {player.charCurrentHP}
                         </Col>
                         <Col>
-                            Current HP:  {currentCharInfo[0]?.charCurrentHP}
+                            Max HP:  {player.charHP}
                         </Col>
                         <Col>
-                            Max HP:  {currentCharInfo[0]?.charHP}
+                            Max Damage:   {player.charDamageMax}
                         </Col>
                         <Col>
-                            Max Damage:   {currentCharInfo[0]?.charDamageMax}
+                            Min Damage:  {player.charDamageMin}
                         </Col>
                         <Col>
-                            Min Damage:  {currentCharInfo[0]?.charDamageMin}
+                            Char LVL:  {player.charLevel}
                         </Col>
                         <Col>
-                            Char LVL:  {currentCharInfo[0]?.charLevel}
-                        </Col>
-                        <Col>
-                            Char EXP:  {currentCharInfo[0]?.charLevelExp} / {currentCharInfo[0]?.charLevelUpExp}
+                            Char EXP:  {player.charLevelExp} /  {player.charLevelUpExp}
                         </Col>
                     </Row>
-                    <Button onClick={charLogout} > Select Character</Button>
-                    <Button onClick={() => normalDamageHandle(currentCharInfo[0]?.charDamageMin, currentCharInfo[0]?.charDamageMax)} > Normal Attack</Button>
+                    <Button onClick={() => handleSelect(player.charName, player.uid)} >Select Character</Button>
+                </>)}</>}
 
-                </> : <>
-                    {charInfo && charInfo.map((player, index) => <>
-                        <Row>
-                            <Col>
-                                <h2>
-                                    Name: {player.charName}
-                                </h2>
-                            </Col>
-                            <Col>
-                                Char Slot:  {player.id}
-                            </Col>
-                            <Col>
-                                Current HP:   {player.charCurrentHP}
-                            </Col>
-                            <Col>
-                                Max HP:  {player.charHP}
-                            </Col>
-                            <Col>
-                                Max Damage:   {player.charDamageMax}
-                            </Col>
-                            <Col>
-                                Min Damage:  {player.charDamageMin}
-                            </Col>
-                            <Col>
-                                Char LVL:  {player.charLevel}
-                            </Col>
-                            <Col>
-                                Char EXP:  {player.charLevelExp} /  {player.charLevelUpExp}
-                            </Col>
-                        </Row>
-                        <Button onClick={() => handleSelect(player.charName, player.uid)} >Select Character</Button>
-                    </>)}</>}
-            </Row>
         </>
     )
 }
